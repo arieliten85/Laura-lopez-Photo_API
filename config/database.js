@@ -13,7 +13,6 @@ const sequelize = new Sequelize(
   }
 );
 
-// Probar la conexión a la base de datos
 sequelize
   .authenticate()
   .then(() => {

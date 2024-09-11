@@ -1,6 +1,5 @@
 const imagesService = require("../services/images.service");
 
-// Obtener todas las imágenes
 const getImages = (req, res) => {
   imagesService.getAllImages((err, results) => {
     if (err) {

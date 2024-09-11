@@ -4,8 +4,8 @@ const Category = require("../models/Category");
 const getAllImages = (callback) => {
   Image.findAll({
     include: {
-      model: Category, // Incluir el modelo de categoría
-      attributes: ["name"], // Solo obtener el nombre de la categoría
+      model: Category,
+      attributes: ["name"],
     },
   })
     .then((images) => {
