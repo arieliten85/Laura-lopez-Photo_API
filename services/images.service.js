@@ -1,14 +1,19 @@
-const connection = require("../config/database");
+const Image = require("../models/Image");
+const Category = require("../models/Category");
 
-// Obtener todas las imágenes
 const getAllImages = (callback) => {
-  connection.query("SELECT * FROM images", (err, results) => {
-    if (err) {
+  Image.findAll({
+    include: {
+      model: Category, // Incluir el modelo de categoría
+      attributes: ["name"], // Solo obtener el nombre de la categoría
+    },
+  })
+    .then((images) => {
+      callback(null, images);
+    })
+    .catch((err) => {
       callback(err, null);
-      return;
-    }
-    callback(null, results);
-  });
+    });
 };
 
 module.exports = {

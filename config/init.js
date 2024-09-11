@@ -1,32 +1,59 @@
-// db/init.js
-const connection = require("../config/database");
+const sequelize = require("../config/database");
+const Image = require("../models/Image");
+const Category = require("../models/Category");
 const { fetchImagesSession } = require("../config/data");
 
-const createTableQuery = `
-  CREATE TABLE IF NOT EXISTS images (
-    id INT PRIMARY KEY,
-    img VARCHAR(255) NOT NULL,
-    category VARCHAR(50) NOT NULL
-  );
-`;
+sequelize
+  .sync({ force: false }) // Cambia a `true` si quieres recrear las tablas
+  .then(async () => {
+    console.log("Database synced.");
 
-const insertDataQuery = `
-  INSERT INTO images (id, img, category) VALUES ?
-`;
+    // Extraer categorías únicas de las imágenes
+    const categoriesFromImages = [
+      ...new Set(fetchImagesSession.map((item) => item.category)),
+    ];
 
-const data = fetchImagesSession.map((item) => [
-  item.id,
-  item.img,
-  item.category,
-]);
+    // Verificar qué categorías ya existen en la base de datos
+    const existingCategories = await Category.findAll({
+      where: {
+        name: categoriesFromImages,
+      },
+      attributes: ["name"],
+    });
 
-connection.query(createTableQuery, (err) => {
-  if (err) throw err;
-  console.log("Table created or already exists.");
+    // Filtrar categorías que no están en la base de datos
+    const existingCategoryNames = existingCategories.map(
+      (category) => category.name
+    );
+    const newCategories = categoriesFromImages.filter(
+      (category) => !existingCategoryNames.includes(category)
+    );
 
-  connection.query(insertDataQuery, [data], (err) => {
-    if (err) throw err;
-    console.log("Data inserted into the table.");
-    connection.end();
+    // Insertar nuevas categorías
+    if (newCategories.length > 0) {
+      await Category.bulkCreate(
+        newCategories.map((name) => ({ name })),
+        { ignoreDuplicates: true }
+      );
+      console.log("New categories inserted.");
+    }
+
+    // Obtener todas las categorías (nuevas y existentes)
+    const allCategories = await Category.findAll();
+
+    // Mapear las imágenes con sus respectivas categorías
+    const imagesData = fetchImagesSession.map((item) => {
+      const category = allCategories.find((c) => c.name === item.category);
+      return {
+        img: item.img,
+        categoryId: category ? category.id : null,
+      };
+    });
+
+    // Insertar las imágenes
+    await Image.bulkCreate(imagesData);
+    console.log("Images inserted.");
+  })
+  .catch((err) => {
+    console.error("Error syncing database:", err);
   });
-});
