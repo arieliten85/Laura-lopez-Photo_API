@@ -5,19 +5,22 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon app.js",
-    "loadData": "node config/init.js",
+    "loadData": "node config/syncAndUploadImages.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.7.4",
+    "axios": "^1.7.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.11.1",
-    "sequelize": "^6.37.3"
+    "sequelize": "^6.37.3",
+    "sharp": "^0.33.5",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
