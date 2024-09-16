@@ -11,9 +11,8 @@ const createImage = async (imageName, categoryId) => {
   }
 
   // Verifica si la categoría existe
-  const categoryExists = await Category.findByPk(categoryId);
-
-  if (!categoryExists) {
+  const category = await Category.findByPk(categoryId);
+  if (!category) {
     throw new Error("Category not found");
   }
 
@@ -22,10 +21,17 @@ const createImage = async (imageName, categoryId) => {
   }
 
   // Crea una nueva instancia del modelo Image
-  return await Image.create({
+  const newImage = await Image.create({
     img: imageName,
     categoryId: categoryId,
   });
+
+  // Incluye el nombre de la categoría en la respuesta
+  const imageWithCategory = await Image.findByPk(newImage.id, {
+    include: { model: Category, attributes: ["name"] },
+  });
+
+  return imageWithCategory;
 };
 
 const getAllImages = () => {
@@ -46,7 +52,12 @@ const updateImage = async (id, categoryId) => {
     throw new Error("Image not found");
   }
 
-  return await image.update({ categoryId });
+  await image.update({ categoryId });
+
+  // Incluye el nombre de la categoría en la respuesta actualizada
+  return Image.findByPk(id, {
+    include: { model: Category, attributes: ["name"] },
+  });
 };
 
 const deleteImage = async (id) => {
