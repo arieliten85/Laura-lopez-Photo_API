@@ -3,7 +3,7 @@ const sharp = require("sharp");
 const path = require("path");
 const fs = require("fs/promises");
 
-const uploadFolder = path.join(__dirname, "../public/uploads");
+const uploadFolder = path.join(__dirname, "../../public/uploads");
 
 // Asegúrate de que el directorio de uploads exista
 const ensureUploadFolderExists = async () => {
