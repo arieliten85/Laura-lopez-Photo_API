@@ -6,7 +6,7 @@ Esta API proporciona una solución para la gestión de imágenes y categorías e
 
 - **Carga Inicial de Imágenes:** Permite la carga de un conjunto de imágenes con sus categorías correspondientes.
 - **Gestión de Imágenes:** Endpoints para crear, buscar, actualizar y eliminar imágenes.
-- **Gestión de Categorías:** (PENDIENTE) Implementación de un CRUD para categorías.
+- **Gestión de Categorías:** Implementación de un CRUD para categorías.
 
 ## Instalación
 
